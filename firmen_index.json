@@ -3,17 +3,17 @@
     {
       "id": "acme_gmbh",
       "name": "ACME GmbH",
-      "pfad": "firmen/acme_gmbh.json"
+      "config_file": "firmen/acme_gmbh.json"
     },
     {
       "id": "techcorp_ag",
       "name": "TechCorp AG",
-      "pfad": "firmen/techcorp_ag.json"
+      "config_file": "firmen/techcorp_ag.json"
     },
     {
       "id": "global_services",
       "name": "Global Services GmbH",
-      "pfad": "firmen/global_services.json"
+      "config_file": "firmen/global_services.json"
     }
   ]
 }
