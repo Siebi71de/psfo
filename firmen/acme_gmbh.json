@@ -1,0 +1,430 @@
+{
+  "firma": {
+    "id": "acme_gmbh",
+    "name": "ACME GmbH",
+    "beschreibung": "Traditioneller Mittelständler, Alt-Regelung (vor 2008)"
+  },
+  "versorgungsordnung": {
+    "name": "Versorgungsordnung 1998",
+    "gueltig_ab": "1998-01-01",
+    "stichtag": "2008-01-01",
+    "regelung": "alt",
+    "parameter": {
+      "satz_pro_jahr": 30.0,
+      "teilzeit_standard": true,
+      "regelaltersgrenze": 67,
+      "vorzeitige_altersgrenze": 63,
+      "berufsunfaehigkeit_prozent": 50
+    },
+    "entgeltumwandlung": false,
+    "zusagedatum": "1998-01-01",
+    "unverfallbarkeit": {
+      "rechtsgrundlage": "§ 1b BetrAVG i.V.m. § 30f Abs. 3 BetrAVG",
+      "regeln": [
+        {
+          "id": "entgeltumwandlung",
+          "beschreibung": "Entgeltumwandlung: sofort unverfallbar",
+          "bedingung": {
+            "type": "entgeltumwandlung"
+          },
+          "rechtsgrundlage": "§ 1b Abs. 5 BetrAVG"
+        },
+        {
+          "id": "neu_ab_2018",
+          "beschreibung": "Zusage ab 01.01.2018: Mindestalter 21, Mindestdauer 3 Jahre",
+          "bedingung": {
+            "type": "zusage_ab",
+            "datum": "2018-01-01"
+          },
+          "mindestalter_bei_zusage": 21,
+          "mindestdauer_jahre": 3,
+          "rechtsgrundlage": "§ 1b Abs. 1 BetrAVG"
+        },
+        {
+          "id": "uebergang_2001_2017",
+          "beschreibung": "Zusage 01.01.2001–31.12.2017: Mindestalter 25, Mindestdauer 5 Jahre",
+          "bedingung": {
+            "type": "zusage_zwischen",
+            "von": "2001-01-01",
+            "bis": "2017-12-31"
+          },
+          "mindestalter_bei_zusage": 25,
+          "mindestdauer_jahre": 5,
+          "rechtsgrundlage": "§ 30f Abs. 1 BetrAVG"
+        },
+        {
+          "id": "alt_vor_2001",
+          "beschreibung": "Zusage vor 01.01.2001: Mindestalter 35, Mindestdauer 10 Jahre (oder 12 Jahre Betriebszugehörigkeit)",
+          "bedingung": {
+            "type": "zusage_vor",
+            "datum": "2001-01-01"
+          },
+          "mindestalter_bei_zusage": 35,
+          "mindestdauer_jahre": 10,
+          "alternativ_dienstjahre": 12,
+          "rechtsgrundlage": "§ 30f Abs. 3 BetrAVG"
+        }
+      ]
+    },
+    "insolvenzdatum": "2024-06-30"
+  },
+  "schema": {
+    "schema_version": "2.0",
+    "name": "ACME GmbH - Alt-Regelung",
+    "input_fields": [
+      {
+        "id": "eintrittsdatum",
+        "label": "Eintrittsdatum",
+        "type": "date",
+        "required": true,
+        "category": "basis",
+        "order": 1
+      },
+      {
+        "id": "austrittsdatum",
+        "label": "Austrittsdatum",
+        "type": "date",
+        "required": true,
+        "category": "basis",
+        "order": 2
+      },
+      {
+        "id": "geburtsdatum",
+        "label": "Geburtsdatum",
+        "type": "date",
+        "required": false,
+        "category": "person",
+        "order": 3
+      },
+      {
+        "id": "mittlerer_teilzeitfaktor",
+        "label": "Mittlerer Teilzeitfaktor",
+        "type": "slider",
+        "min": 0.0,
+        "max": 1.0,
+        "step": 0.05,
+        "default": 1.0,
+        "required": false,
+        "category": "berechnung",
+        "order": 4,
+        "overridable": true,
+        "help": "1.0 = Vollzeit, 0.8 = 80%, etc.",
+        "visible_in": [
+          "einfach"
+        ]
+      }
+    ],
+    "ui_layout": {
+      "modes": [
+        {
+          "id": "einfach",
+          "label": "Einfache Eingabe",
+          "description": "Schnelle Eingabe ohne detaillierte Zeiträume",
+          "fields": [
+            "eintrittsdatum",
+            "austrittsdatum",
+            "geburtsdatum",
+            "mittlerer_teilzeitfaktor"
+          ]
+        },
+        {
+          "id": "zeitraum",
+          "label": "Zeitraum-Tabelle",
+          "description": "Detaillierte Erfassung mit Zeiträumen",
+          "fields": [
+            "eintrittsdatum",
+            "austrittsdatum"
+          ],
+          "zeitraum_tabelle": {
+            "enabled": true,
+            "beginn": {
+              "type": "input",
+              "input_id": "eintrittsdatum",
+              "beschreibung": "Erfassungsbeginn"
+            },
+            "ende": {
+              "type": "input",
+              "input_id": "austrittsdatum",
+              "beschreibung": "Erfassungsende"
+            },
+            "spalten": [
+              {
+                "id": "von",
+                "label": "Von",
+                "type": "date",
+                "auto_calculated": true,
+                "disabled": true,
+                "width": 2
+              },
+              {
+                "id": "bis",
+                "label": "Bis",
+                "type": "date",
+                "required": true,
+                "width": 2
+              },
+              {
+                "id": "als_dienstzeit",
+                "label": "Als Dienstzeit",
+                "type": "checkbox",
+                "default": true,
+                "width": 1,
+                "always_visible": true
+              },
+              {
+                "id": "ggf",
+                "label": "GGF",
+                "type": "checkbox",
+                "default": false,
+                "always_visible": true,
+                "help": "Gesellschafter-Geschäftsführer (zählt nicht für m)"
+              },
+              {
+                "id": "teilzeitfaktor",
+                "label": "Teilzeitfaktor",
+                "type": "slider",
+                "min": 0.0,
+                "max": 1.0,
+                "step": 0.05,
+                "default": 1.0,
+                "always_visible": true,
+                "width": 2
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "leistungsteile": [
+      {
+        "id": "dienstjahre",
+        "art": "Berechnungsgrundlage",
+        "label": "Dienstjahre",
+        "einheit": "Jahre",
+        "overridable": true,
+        "formula": {
+          "type": "function",
+          "function_id": "calculate_dienstjahre",
+          "inputs": [
+            "eintrittsdatum",
+            "austrittsdatum",
+            "geburtsdatum"
+          ]
+        }
+      },
+      {
+        "id": "mittlerer_teilzeitfaktor",
+        "art": "Berechnungsgrundlage",
+        "label": "Mittlerer Teilzeitfaktor",
+        "einheit": "Faktor",
+        "overridable": true,
+        "formula": {
+          "type": "zeitraum_aggregation",
+          "quelle": "zeitraeume",
+          "feld": "teilzeitfaktor",
+          "aggregation": "gewichteter_durchschnitt",
+          "gewicht": "tage",
+          "filter": {
+            "feld": "als_dienstzeit",
+            "wert": true
+          },
+          "fallback": {
+            "type": "function",
+            "function_id": "calculate_avg_teilzeit",
+            "inputs": [
+              "teilzeit_tabelle"
+            ]
+          }
+        }
+      },
+      {
+        "id": "grundrente_monatlich",
+        "art": "Monatliche Rente vorschüssig",
+        "label": "Grundrente",
+        "einheit": "EUR/Monat",
+        "overridable": true,
+        "rechtsgrundlage": {
+          "dokument": "Versorgungsordnung 1998",
+          "paragraf": "§ 4 Abs. 1",
+          "volltext": "Versorgungsordnung vom 01.01.1998 der ACME GmbH",
+          "beschreibung": "Berechnung der Grundrente"
+        },
+        "erster_termin": {
+          "type": "calculated",
+          "beschreibung": "Erreichen der Regelaltersgrenze",
+          "formel": {
+            "type": "expression",
+            "expression": "add_years(geburtsdatum, regelaltersgrenze)",
+            "variables": [
+              "geburtsdatum"
+            ],
+            "parameters": [
+              "regelaltersgrenze"
+            ]
+          }
+        },
+        "anpassungsregeln": {
+          "dynamisierung_vor_rentenbeginn": {
+            "aktiviert": true,
+            "beschreibung": "3-jährliche Anpassung gemäß VPI",
+            "rechtsgrundlage": "§ 8 Abs. 1 VO"
+          },
+          "dynamisierung_ab_rentenbeginn": {
+            "aktiviert": true,
+            "beschreibung": "3-jährliche Anpassung gemäß VPI",
+            "rechtsgrundlage": "§ 8 Abs. 2 VO"
+          }
+        },
+        "vorzeitige_leistung": {
+          "erlaubt": true,
+          "beschreibung": "Ab Alter 63 möglich",
+          "fruehester_termin": {
+            "type": "calculated",
+            "formel": {
+              "type": "expression",
+              "expression": "add_years(geburtsdatum, vorzeitige_altersgrenze)",
+              "variables": [
+                "geburtsdatum"
+              ],
+              "parameters": [
+                "vorzeitige_altersgrenze"
+              ]
+            }
+          },
+          "abschlag": {
+            "type": "prozentual_pro_monat",
+            "wert": 0.003,
+            "beschreibung": "0,3% Abschlag pro Monat"
+          },
+          "rechtsgrundlage": "§ 5 Abs. 3 VO"
+        },
+        "invalidenleistung": {
+          "aktiviert": true,
+          "voraussetzung": "berufsunfaehigkeit_mind_50_prozent",
+          "hoehe": {
+            "type": "prozentual",
+            "basis": "grundrente_monatlich",
+            "faktor": 1.0,
+            "beschreibung": "100% der Altersrente"
+          },
+          "wartezeit": {
+            "jahre": 5,
+            "beschreibung": "5 Jahre Wartezeit"
+          },
+          "rechtsgrundlage": "§ 6 Abs. 1 VO"
+        },
+        "todesfallleistung": {
+          "beschreibung": "keine Wartezeit",
+          "witwenrente": {
+            "aktiviert": true,
+            "hoehe": {
+              "type": "prozentual",
+              "basis": "grundrente_monatlich",
+              "faktor": 0.6,
+              "beschreibung": "Witwenrente: 60% der Altersrente"
+            },
+            "dauer": "lebenslang",
+            "rechtsgrundlage": "§ 7 Abs. 1 VO"
+          },
+          "waisenrente": {
+            "aktiviert": true,
+            "hoehe": {
+              "type": "prozentual",
+              "basis": "grundrente_monatlich",
+              "faktor": 0.1,
+              "beschreibung": "Waisenrente bis 25: 10% der Altersrente"
+            },
+            "max_alter": 25,
+            "rechtsgrundlage": "§ 7 Abs. 2 VO"
+          },
+          "sterbegeld": {
+            "aktiviert": false
+          }
+        },
+        "formula": {
+          "type": "expression",
+          "expression": "dienstjahre * satz_pro_jahr * mittlerer_teilzeitfaktor",
+          "variables": [
+            "dienstjahre",
+            "mittlerer_teilzeitfaktor"
+          ],
+          "parameters": [
+            "satz_pro_jahr"
+          ]
+        },
+        "formel_anzeige": "Dienstjahre × {satz_pro_jahr} EUR × Teilzeitfaktor",
+        "erklaerung": "Pro Dienstjahr wird ein fester Satz gezahlt, angepasst an die durchschnittliche Teilzeit."
+      }
+    ]
+  },
+  "personen": [
+    {
+      "id": "person_001",
+      "name": "Max Mustermann",
+      "profil": "Vollständige Daten verfügbar",
+      "daten": {
+        "eintrittsdatum": "1995-03-15",
+        "austrittsdatum": "2025-02-01",
+        "geburtsdatum": "1965-05-20",
+        "teilzeit_tabelle": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8
+        ]
+      },
+      "notizen": "Langjähriger Mitarbeiter, Alt-Regelung, Teilzeit ab 6. Jahr"
+    },
+    {
+      "id": "person_002",
+      "name": "Erika Musterfrau",
+      "profil": "Ohne Teilzeit-Tabelle, nur Durchschnitt",
+      "daten": {
+        "eintrittsdatum": "2000-01-01",
+        "austrittsdatum": "2025-02-01",
+        "geburtsdatum": "1970-08-12"
+      },
+      "overrides": {
+        "mittlerer_teilzeitfaktor": 0.75
+      },
+      "notizen": "Alt-Regelung, Teilzeit-Durchschnitt 75%"
+    },
+    {
+      "id": "person_003",
+      "name": "Hans Dampf",
+      "profil": "Nur grobe Schätzung",
+      "daten": {},
+      "overrides": {
+        "dienstjahre": 20,
+        "mittlerer_teilzeitfaktor": 0.9
+      },
+      "notizen": "Nur grobe Angaben: ca. 20 Jahre, ca. 90% Teilzeit"
+    }
+  ]
+}

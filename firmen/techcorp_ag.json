@@ -1,0 +1,522 @@
+{
+  "firma": {
+    "id": "techcorp_ag",
+    "name": "TechCorp AG",
+    "beschreibung": "Modernes Tech-Unternehmen, Neu-Regelung (ab 2008)"
+  },
+  "versorgungsordnung": {
+    "name": "Versorgungsordnung 2015",
+    "gueltig_ab": "2015-01-01",
+    "stichtag": "2008-01-01",
+    "regelung": "neu",
+    "parameter": {
+      "prozentsatz": 0.006,
+      "teilzeit_standard": false,
+      "regelaltersgrenze": 67,
+      "vorzeitige_altersgrenze": 63,
+      "dynamisierung_min": 0.01,
+      "dynamisierung_max": 0.05
+    },
+    "entgeltumwandlung": false,
+    "zusagedatum": "2015-01-01",
+    "unverfallbarkeit": {
+      "rechtsgrundlage": "§ 1b BetrAVG i.V.m. § 30f Abs. 3 BetrAVG",
+      "regeln": [
+        {
+          "id": "entgeltumwandlung",
+          "beschreibung": "Entgeltumwandlung: sofort unverfallbar",
+          "bedingung": {
+            "type": "entgeltumwandlung"
+          },
+          "rechtsgrundlage": "§ 1b Abs. 5 BetrAVG"
+        },
+        {
+          "id": "neu_ab_2018",
+          "beschreibung": "Zusage ab 01.01.2018: Mindestalter 21, Mindestdauer 3 Jahre",
+          "bedingung": {
+            "type": "zusage_ab",
+            "datum": "2018-01-01"
+          },
+          "mindestalter_bei_zusage": 21,
+          "mindestdauer_jahre": 3,
+          "rechtsgrundlage": "§ 1b Abs. 1 BetrAVG"
+        },
+        {
+          "id": "uebergang_2001_2017",
+          "beschreibung": "Zusage 01.01.2001–31.12.2017: Mindestalter 25, Mindestdauer 5 Jahre",
+          "bedingung": {
+            "type": "zusage_zwischen",
+            "von": "2001-01-01",
+            "bis": "2017-12-31"
+          },
+          "mindestalter_bei_zusage": 25,
+          "mindestdauer_jahre": 5,
+          "rechtsgrundlage": "§ 30f Abs. 1 BetrAVG"
+        },
+        {
+          "id": "alt_vor_2001",
+          "beschreibung": "Zusage vor 01.01.2001: Mindestalter 35, Mindestdauer 10 Jahre (oder 12 Jahre Betriebszugehörigkeit)",
+          "bedingung": {
+            "type": "zusage_vor",
+            "datum": "2001-01-01"
+          },
+          "mindestalter_bei_zusage": 35,
+          "mindestdauer_jahre": 10,
+          "alternativ_dienstjahre": 12,
+          "rechtsgrundlage": "§ 30f Abs. 3 BetrAVG"
+        }
+      ]
+    },
+    "insolvenzdatum": "2023-11-30",
+    "tarifgruppen": {
+      "TG_A": {
+        "name": "Tarifgruppe A",
+        "faktor_pro_monat": 1.0
+      },
+      "TG_B": {
+        "name": "Tarifgruppe B",
+        "faktor_pro_monat": 2.0
+      },
+      "TG_C": {
+        "name": "Tarifgruppe C",
+        "faktor_pro_monat": 3.0
+      },
+      "TG_D": {
+        "name": "Tarifgruppe D",
+        "faktor_pro_monat": 5.0
+      },
+      "TG_E": {
+        "name": "Tarifgruppe E",
+        "faktor_pro_monat": 10.0
+      }
+    }
+  },
+  "schema": {
+    "schema_version": "2.0",
+    "name": "TechCorp AG - Neu-Regelung",
+    "input_fields": [
+      {
+        "id": "eintrittsdatum",
+        "label": "Eintrittsdatum",
+        "type": "date",
+        "required": true,
+        "category": "basis",
+        "order": 1
+      },
+      {
+        "id": "austrittsdatum",
+        "label": "Austrittsdatum",
+        "type": "date",
+        "required": true,
+        "category": "basis",
+        "order": 2
+      },
+      {
+        "id": "geburtsdatum",
+        "label": "Geburtsdatum",
+        "type": "date",
+        "required": false,
+        "category": "person",
+        "order": 3
+      },
+      {
+        "id": "mittlerer_teilzeitfaktor",
+        "label": "Mittlerer Teilzeitfaktor",
+        "type": "slider",
+        "min": 0.0,
+        "max": 1.0,
+        "step": 0.05,
+        "default": 1.0,
+        "required": false,
+        "category": "berechnung",
+        "order": 4,
+        "overridable": true,
+        "help": "1.0 = Vollzeit, 0.8 = 80%, etc.",
+        "visible_in": [
+          "einfach"
+        ]
+      },
+      {
+        "id": "letztes_gehalt",
+        "label": "Letztes Gehalt (EUR/Monat)",
+        "type": "number",
+        "min": 0.0,
+        "max": 50000.0,
+        "step": 100.0,
+        "default": 0.0,
+        "required": true,
+        "category": "berechnung",
+        "order": 5,
+        "help": "Monatliches Bruttogehalt",
+        "visible_in": [
+          "einfach"
+        ]
+      }
+    ],
+    "ui_layout": {
+      "modes": [
+        {
+          "id": "einfach",
+          "label": "Einfache Eingabe",
+          "description": "Schnelle Eingabe ohne detaillierte Zeiträume",
+          "fields": [
+            "eintrittsdatum",
+            "austrittsdatum",
+            "geburtsdatum",
+            "mittlerer_teilzeitfaktor",
+            "letztes_gehalt"
+          ]
+        },
+        {
+          "id": "zeitraum",
+          "label": "Zeitraum-Tabelle",
+          "description": "Detaillierte Erfassung mit Zeiträumen",
+          "fields": [
+            "eintrittsdatum",
+            "austrittsdatum"
+          ],
+          "zeitraum_tabelle": {
+            "enabled": true,
+            "beginn": {
+              "type": "input",
+              "input_id": "eintrittsdatum",
+              "beschreibung": "Erfassungsbeginn"
+            },
+            "ende": {
+              "type": "input",
+              "input_id": "austrittsdatum",
+              "beschreibung": "Erfassungsende"
+            },
+            "spalten": [
+              {
+                "id": "von",
+                "label": "Von",
+                "type": "date",
+                "auto_calculated": true,
+                "disabled": true,
+                "width": 2
+              },
+              {
+                "id": "bis",
+                "label": "Bis",
+                "type": "date",
+                "required": true,
+                "width": 2
+              },
+              {
+                "id": "als_dienstzeit",
+                "label": "Als Dienstzeit",
+                "type": "checkbox",
+                "default": true,
+                "width": 1,
+                "always_visible": true
+              },
+              {
+                "id": "ggf",
+                "label": "GGF",
+                "type": "checkbox",
+                "default": false,
+                "always_visible": true,
+                "help": "Gesellschafter-Geschäftsführer (zählt nicht für m)"
+              },
+              {
+                "id": "teilzeitfaktor",
+                "label": "Teilzeitfaktor",
+                "type": "slider",
+                "min": 0.0,
+                "max": 1.0,
+                "step": 0.05,
+                "default": 1.0,
+                "always_visible": true,
+                "width": 2
+              },
+              {
+                "id": "tarifgruppe",
+                "label": "TG",
+                "type": "dropdown",
+                "options": [
+                  {
+                    "value": "TG_A",
+                    "label": "TG A",
+                    "faktor": 1
+                  },
+                  {
+                    "value": "TG_B",
+                    "label": "TG B",
+                    "faktor": 2
+                  },
+                  {
+                    "value": "TG_C",
+                    "label": "TG C",
+                    "faktor": 3
+                  },
+                  {
+                    "value": "TG_D",
+                    "label": "TG D",
+                    "faktor": 5
+                  },
+                  {
+                    "value": "TG_E",
+                    "label": "TG E",
+                    "faktor": 10
+                  }
+                ],
+                "default": "TG_C",
+                "always_visible": true,
+                "help": "Tarifgruppe bestimmt den Rentenfaktor (€/Monat)"
+              },
+              {
+                "id": "bonus",
+                "label": "Bonus %",
+                "type": "number",
+                "min": 0,
+                "max": 100,
+                "default": 0,
+                "step": 5,
+                "always_visible": false,
+                "conditional": {
+                  "field": "tarifgruppe",
+                  "operator": "in",
+                  "value": [
+                    "TG_D",
+                    "TG_E"
+                  ]
+                },
+                "help": "Zusätzlicher Bonus nur für TG D und E"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "leistungsteile": [
+      {
+        "id": "dienstjahre",
+        "art": "Berechnungsgrundlage",
+        "label": "Dienstjahre",
+        "einheit": "Jahre",
+        "overridable": true,
+        "formula": {
+          "type": "function",
+          "function_id": "calculate_dienstjahre",
+          "inputs": [
+            "eintrittsdatum",
+            "austrittsdatum",
+            "geburtsdatum"
+          ]
+        }
+      },
+      {
+        "id": "mittlerer_teilzeitfaktor",
+        "art": "Berechnungsgrundlage",
+        "label": "Mittlerer Teilzeitfaktor",
+        "einheit": "Faktor",
+        "overridable": true,
+        "formula": {
+          "type": "zeitraum_aggregation",
+          "quelle": "zeitraeume",
+          "feld": "teilzeitfaktor",
+          "aggregation": "gewichteter_durchschnitt",
+          "gewicht": "tage",
+          "filter": {
+            "feld": "als_dienstzeit",
+            "wert": true
+          },
+          "fallback": {
+            "type": "constant",
+            "value": 1.0
+          }
+        }
+      },
+      {
+        "id": "grundrente_monatlich",
+        "art": "Monatliche Rente vorschüssig",
+        "label": "Grundrente",
+        "einheit": "EUR/Monat",
+        "overridable": true,
+        "rechtsgrundlage": {
+          "dokument": "Versorgungsordnung 2015",
+          "paragraf": "§ 3 Abs. 1",
+          "volltext": "Versorgungsordnung vom 01.01.2015 der TechCorp AG",
+          "beschreibung": "Berechnung der Grundrente nach Gehaltsformel"
+        },
+        "erster_termin": {
+          "type": "calculated",
+          "beschreibung": "Erreichen der Regelaltersgrenze",
+          "formel": {
+            "type": "expression",
+            "expression": "add_years(geburtsdatum, regelaltersgrenze)",
+            "variables": [
+              "geburtsdatum"
+            ],
+            "parameters": [
+              "regelaltersgrenze"
+            ]
+          }
+        },
+        "anpassungsregeln": {
+          "dynamisierung_vor_rentenbeginn": {
+            "aktiviert": true,
+            "beschreibung": "Jährliche Anpassung gemäß Gehaltsentwicklung",
+            "rechtsgrundlage": "§ 9 Abs. 1 VO"
+          },
+          "dynamisierung_ab_rentenbeginn": {
+            "aktiviert": true,
+            "beschreibung": "Jährliche Anpassung 1–5% gemäß Gehaltsentwicklung",
+            "rechtsgrundlage": "§ 9 Abs. 2 VO"
+          },
+          "mindestrente": {
+            "aktiviert": true,
+            "betrag": 400.0,
+            "beschreibung": "Garantierte Mindestrente von 400 EUR/Monat"
+          }
+        },
+        "vorzeitige_leistung": {
+          "erlaubt": true,
+          "beschreibung": "Ab Alter 63 möglich",
+          "fruehester_termin": {
+            "type": "calculated",
+            "formel": {
+              "type": "expression",
+              "expression": "add_years(geburtsdatum, vorzeitige_altersgrenze)",
+              "variables": [
+                "geburtsdatum"
+              ],
+              "parameters": [
+                "vorzeitige_altersgrenze"
+              ]
+            }
+          },
+          "abschlag": {
+            "type": "prozentual_pro_jahr",
+            "wert": 0.036,
+            "beschreibung": "3,6% Abschlag pro Jahr",
+            "max_abschlag": 0.144
+          },
+          "rechtsgrundlage": "§ 4 Abs. 2 VO"
+        },
+        "invalidenleistung": {
+          "aktiviert": true,
+          "voraussetzung": "erwerbsunfaehigkeit_voll",
+          "hoehe": {
+            "type": "hochrechnung",
+            "basis": "grundrente_monatlich",
+            "beschreibung": "Hochrechnung bis Regelaltersgrenze"
+          },
+          "wartezeit": {
+            "jahre": 3,
+            "beschreibung": "3 Jahre Wartezeit"
+          },
+          "rechtsgrundlage": "§ 5 Abs. 1 VO"
+        },
+        "todesfallleistung": {
+          "beschreibung": "Mindestens 1 Jahr verheiratet",
+          "witwenrente": {
+            "aktiviert": true,
+            "hoehe": {
+              "type": "prozentual",
+              "basis": "grundrente_monatlich",
+              "faktor": 0.55,
+              "beschreibung": "Witwenrente: 55% der Altersrente"
+            },
+            "dauer": "lebenslang",
+            "rechtsgrundlage": "§ 6 Abs. 1 VO"
+          },
+          "waisenrente": {
+            "aktiviert": true,
+            "hoehe": {
+              "type": "prozentual",
+              "basis": "grundrente_monatlich",
+              "faktor": 0.15,
+              "beschreibung": "Waisenrente bis 27: 15% der Altersrente"
+            },
+            "max_alter": 27,
+            "rechtsgrundlage": "§ 6 Abs. 2 VO"
+          }
+        },
+        "formula": {
+          "type": "expression",
+          "expression": "letztes_gehalt * 12 * prozentsatz * dienstjahre",
+          "variables": [
+            "letztes_gehalt",
+            "dienstjahre"
+          ],
+          "parameters": [
+            "prozentsatz"
+          ]
+        },
+        "formel_anzeige": "Letztes Gehalt × 12 × {prozentsatz_prozent}% × Dienstjahre",
+        "erklaerung": "Pro Dienstjahr wird ein Prozentsatz des Jahresgehalts als Rente gezahlt."
+      },
+      {
+        "id": "sterbegeld",
+        "art": "Einmalige Todesfallleistung",
+        "label": "Sterbegeld",
+        "einheit": "EUR einmalig",
+        "overridable": false,
+        "rechtsgrundlage": {
+          "dokument": "Versorgungsordnung 2015",
+          "paragraf": "§ 7 Abs. 1",
+          "volltext": "Versorgungsordnung vom 01.01.2015 der TechCorp AG",
+          "beschreibung": "Einmaliges Sterbegeld an Hinterbliebene"
+        },
+        "erster_termin": {
+          "type": "event",
+          "ereignis": "todesfall",
+          "beschreibung": "Zahlung im Todesfall"
+        },
+        "invalidenleistung": {
+          "aktiviert": false
+        },
+        "vorzeitige_leistung": {
+          "erlaubt": false
+        },
+        "todesfallleistung": {
+          "beschreibung": "1 Jahr Betriebszugehörigkeit Wartezeit",
+          "sterbegeld": {
+            "aktiviert": true,
+            "hoehe": {
+              "type": "fest",
+              "betrag": 50000.0,
+              "beschreibung": "50.000 EUR einmalig"
+            },
+            "zahlungsempfaenger": "Ehepartner, sonst Kinder, sonst Eltern, sonst Erben",
+            "rechtsgrundlage": "§ 7 Abs. 1 VO"
+          }
+        },
+        "formula": {
+          "type": "constant",
+          "value": 50000.0
+        },
+        "formel_anzeige": "Fester Betrag: 50.000 EUR",
+        "erklaerung": "Einmalige Kapitalleistung im Todesfall."
+      }
+    ]
+  },
+  "personen": [
+    {
+      "id": "person_004",
+      "name": "Julia Schmidt",
+      "profil": "Vollständige Daten, Vollzeit",
+      "daten": {
+        "eintrittsdatum": "2010-06-01",
+        "austrittsdatum": "2025-02-01",
+        "geburtsdatum": "1982-11-30",
+        "letztes_gehalt": 5500,
+        "kapitalwahlrecht_prozent": 30
+      },
+      "notizen": "Neu-Regelung, Vollzeit, Kapitalwahlrecht 30%"
+    },
+    {
+      "id": "person_005",
+      "name": "Thomas Weber",
+      "profil": "Unvollständige Daten",
+      "daten": {
+        "eintrittsdatum": "2015-01-15",
+        "geburtsdatum": "1985-03-22",
+        "letztes_gehalt": 4200
+      },
+      "notizen": "Neu-Regelung, Austrittsdatum fehlt noch (aktiv)"
+    }
+  ]
+}
